@@ -19,7 +19,7 @@ int reporEst(){
 
 }
 int prodFalta(){
-    
+
 }
 
 int main(){
@@ -28,18 +28,18 @@ int main(){
     do
     {
         system("cls");
-        printf("=====================================================================");
-        printf("    SISTEMA DE FARMACIA     \n");
-        printf("=====================================================================");
+        printf("=====================================================================\n");
+        printf("                        SISTEMA DE FARMACIA     \n");
+        printf("=====================================================================\n");
         printf("1 - Cadastrar produto\n");
         printf("2 - Listar produto\n");
         printf("3 - Buscar produto\n");
-        Printf("4 - Vender produto\n");
+        printf("4 - Vender produto\n");
         printf("5 - Repor estoque\n");
         printf("6 - Produtos em falta\n");
         printf("0 - Sair\n");
-        printf("=====================================================================");
-        printf("Escolha uma opção: ");
+        printf("=====================================================================\n");
+        printf("\nEscolha uma opção: ");
         scanf("%d", &escolha);
 
 switch(escolha){
