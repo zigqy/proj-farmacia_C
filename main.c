@@ -4,6 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#define MAX 100
 
     // cod + nome + preco + qnt
     // molde de prod, lugar na memoria, contador p saber qnts existem
@@ -15,7 +16,7 @@
     int quantidade;
 };  // pq é uma declaracao de tipo.
 int cadastProd(struct Prod produtos[], int* total){
-    if(*total >= 100){
+    if(*total >= MAX){
         printf("Limite de produtos atingido!\n");
         return 0;
     }
@@ -39,12 +40,21 @@ int cadastProd(struct Prod produtos[], int* total){
 
     printf("Nome: ");
     fgets(produtos[*total].nome, sizeof(produtos[*total].nome), stdin);
+    return 0;
+
     produtos[*total].nome[strcspn(produtos[*total].nome, "\n")] = '\0'; // tira espaco do /n
 
-    printf("Preco: ");
-    fgets(buffer, sizeof(buffer), stdin);
-    produtos[*total].preco = atof(buffer); //atof é float p inteiro
+    if(strlen(produtos[*total].nome)==0){
+        printf("Nome inválido!\n");
+        return 0;
+    }
 
+    printf("Preco: ");
+    if(fgets(buffer, sizeof(buffer), stdin)== NULL) 
+    return 0;
+
+    produtos[*total].preco = atof(buffer);
+    
     if(produtos[*total].preco < 0 ){
         printf("Preco inválido!\n");
         return 0;
@@ -89,11 +99,91 @@ void listProd(struct Prod produtos[], int total){
 
 }
 int buscProd(struct Prod produtos[], int total){
+    if(total == 0){
+        printf("Nenhum produto cadastrado!\n");
     return 0;
 }
+
+char buffer[50];
+int codigoBusc;
+int encontrado =0;
+
+    printf("Digite o código do produto: \n");
+    if(fgets(buffer, sizeof(buffer), stdin) == NULL)
+    return 0;
+
+    codigoBusc = atoi(buffer);
+        for(int i=0;i<total;i++){
+            if(produtos[i].codigo == codigoBusc){
+                printf("\nProduto Encontrado!\n");
+                printf("Código: %d\n", produtos[i].codigo);
+                printf("Nome: %s\n", produtos[i].nome);
+                printf("Preco: %.2f\n", produtos[i].preco);
+                printf("Quantidade: %d\n", produtos[i].quantidade);
+
+                encontrado = 1;
+                break;
+            }
+        }
+        if(!encontrado){
+            printf("Produto não encontrado!\n");
+        }
+        return encontrado;
+}
+// pede codigo, //verificar se existe, //pede qnt // verifica estoque // diminuir no estoque // mostrar valor total da venda
+
 float vendProd(struct Prod produtos[], int total){
+    if(total == 0){
+        printf("Nenhum produto cadastrado!\n");
+        return 0;
+    }
+    char buffer[50];
+    int codigo;
+    int quantidade;
+    int indice = 1;
+
+    printf("Digite o código do produto: \n");
+    if(fgets(buffer, sizeof(buffer), stdin) == NULL)
     return 0;
+
+    codigo = atoi(buffer);
+
+    for(int i=0;i<total;i++){
+        if(produtos[i].codigo == codigo){
+            indice = 1;
+            break;
+        }
+    }
+    if(indice == -1){
+        printf("Produto não encontrado!\n");
+        return 0;
+    }
+    printf("Quantidade a vender: ");
+    if(fgets(buffer, sizeof(buffer), stdin) == NULL)
+    return 0;
+
+    quantidade = atoi(buffer);
+
+    if(quantidade <= 0){
+        printf("Quantidade inválida!\n");
+        return 0;
+    }
+    if(produtos[indice].quantidade < quantidade){
+        printf("Estoque insuficiente!\n");
+        return 0;
+    }
+    produtos[indice].quantidade -= quantidade;
+
+    float totalVenda = produtos[indice].preco * quantidade;
+
+    printf("\nVenda realizada com sucesso!\n");
+    printf("Produto: %s\n", produtos[indice].nome);
+    printf("Total da venda: R$%.2f\n", totalVenda);
+    printf("Estoque restante: %d\n", produtos[indice].quantidade);
+
+    return totalVenda;
 }
+
 int reporEst(struct Prod produtos[], int total){
     return 0;
 }
@@ -105,7 +195,7 @@ int prodFalta(struct Prod produtos[], int total){
 
 int main(){
     int escolha;
-    struct Prod produtos[100];
+    struct Prod produtos[MAX];
     int total=0;
     char buffer[10];
     do
@@ -133,10 +223,10 @@ switch(escolha){
         listProd(produtos, total);
         break;
     case 3:
-        printf("Buscar produto: \n");
+        buscProd(produtos, total);
         break;
     case 4: 
-        printf("Vender produto \n");
+        vendProd(produtos, total);
         break;
     case 5:
         printf("Repor estoque \n");
@@ -151,8 +241,7 @@ switch(escolha){
         printf("Comando inexistente!");    
 }
     printf("\nPressione ENTER para continuar...");
-    getchar();
-    getchar();
+    fgets(buffer, sizeof(buffer), stdin);
     } while (escolha != 0);
     
     return 8;
