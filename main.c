@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -184,8 +183,53 @@ float vendProd(struct Prod produtos[], int total){
     return totalVenda;
 }
 
-int reporEst(struct Prod produtos[], int total){
-    return 0;
+int reporEst(struct Prod produtos[], int total) {
+    if (total == 0) {
+        printf("Nenhum produto cadastrado no estoque.\n");
+        return 0;
+    }
+
+    char buffer[50];
+    int codigo;
+    int quantidade;
+    int encontrado = -1;
+
+    printf("Digite o código do produto para repor: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+        return 0;
+
+    codigo = atoi(buffer);
+
+    for (int i = 0; i < total; i++) { // percorre  o array p encontrar o codigo do produto
+        if (produtos[i].codigo == codigo) {
+            encontrado = i;
+            break;
+        }
+    }
+
+    if (encontrado == -1) {
+        printf("Produto não encontrado!\n");
+        return 0;
+    }
+
+    printf("Digite a quantidade a ser adicionada: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+        return 0;
+
+    quantidade = atoi(buffer); // converte de string p inteiro
+
+    if (quantidade <= 0) {
+        printf("Quantidade inválida!\n");
+        return 0;
+    }
+
+    produtos[encontrado].quantidade += quantidade; // att aqui
+
+    printf("\nEstoque atualizado com sucesso!\n");
+    printf("Produto: %s\n", produtos[encontrado].nome);
+    printf("Nova quantidade em estoque: %d\n", produtos[encontrado].quantidade);
+
+    return 1;
 }
 int prodFalta(struct Prod produtos[], int total){
     return 0;
@@ -229,7 +273,7 @@ switch(escolha){
         vendProd(produtos, total);
         break;
     case 5:
-        printf("Repor estoque \n");
+        reporEst(produtos, total);
         break;
     case 6:
         printf("Produtos em falta \n");
